@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Find the Best Book to Read</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg-1: #32243b; /* deep plum */
+      --bg-2: #5b3b8a; /* royal purple */
+      --accent: #b08de6; /* lavender */
+      --muted: #efe8ff; /* very light lavender */
+      --card: rgba(255,255,255,0.06);
+      --glass: rgba(255,255,255,0.06);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: 'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+      background: linear-gradient(135deg,var(--bg-1),var(--bg-2));
+      color:var(--muted);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      padding:48px 20px;
+      display:block;
+    }
+
+    .container{
+      width:min(880px,96%);
+      background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
+      border-radius:18px;
+      padding:28px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.45);
+      backdrop-filter: blur(6px) saturate(120%);
+      border:1px solid rgba(255,255,255,0.04);
+      margin: 0 auto;}
+
+    header{
+      text-align:center;
+      margin-bottom:18px;
+    }
+
+    h1{
+      font-family: 'Baloo 2', 'Poppins', cursive;
+      font-size:clamp(28px, 4vw, 40px);
+      margin:6px 0 4px 0;
+      line-height:1;
+      color:var(--muted);
+      letter-spacing:0.6px;
+    }
+
+    p.lead{
+      margin:0;
+      color:rgba(239,232,255,0.9);
+      opacity:0.9;
+      font-weight:300;
+    }
+
+    .content{
+      display:grid;
+      grid-template-columns: 1fr 320px;
+      gap:22px;
+      margin-top:20px;
+    }
+
+    @media (max-width:880px){
+      .content{grid-template-columns:1fr}
+    }
+
+    .card{
+      background:var(--card);
+      border-radius:12px;
+      padding:18px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.02);
+      border:1px solid rgba(255,255,255,0.03);
+    }
+
+    ul.steps{
+      list-style:none;
+      padding:0;
+      margin:0;
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+    }
+
+    ul.steps li{
+      display:flex;
+      gap:12px;
+      align-items:flex-start;
+      background: linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      padding:12px;
+      border-radius:10px;
+      border:1px solid rgba(176,141,230,0.08);
+    }
+
+    .step-num{
+      min-width:40px;
+      height:40px;
+      border-radius:10px;
+      display:grid;
+      place-items:center;
+      font-weight:700;
+      background: linear-gradient(180deg, rgba(176,141,230,0.18), rgba(176,141,230,0.08));
+      color:var(--bg-1);
+      font-family: 'Baloo 2', cursive;
+      box-shadow: 0 6px 14px rgba(88,56,129,0.18);
+    }
+
+    .step-body h3{
+      margin:0 0 6px 0;
+      font-size:16px;
+      color:var(--muted);
+    }
+    .step-body p{
+      margin:0;
+      font-size:14px;
+      color:rgba(239,232,255,0.85);
+    }
+
+    aside a{
+      display:inline-block;
+      text-decoration:none;
+      color:var(--bg-1);
+      background:var(--accent);
+      padding:10px 12px;
+      border-radius:8px;
+      margin:8px 6px 8px 0;
+      font-weight:600;
+      box-shadow: 0 6px 18px rgba(88,56,129,0.12);
+      transition:transform .14s ease, box-shadow .14s ease;
+    }
+    aside a:hover{transform:translateY(-3px); box-shadow: 0 10px 30px rgba(88,56,129,0.18)}
+
+    footer{
+      margin-top:18px;
+      text-align:center;
+      color:rgba(239,232,255,0.7);
+      font-size:13px;
+    }
+
+    /* small helper styles */
+    .muted{color:rgba(239,232,255,0.65); font-size:13px}
+    .note{margin-top:8px; font-size:13px}
+
+  </style>
+</head>
+<body>
+  <div class="lead">Menu: <a href="index.html">Home</a></div>
+  <div class="container">
+    <header>
+      <h1>How to Find the Best Book to Read</h1>
+      <p class="lead">Simple steps, useful links, and quick habits to find books you'll love — without the overwhelm.</p>
+    </header>
+
+    <div class="content">
+      <main class="card">
+        <ul class="steps">
+          <li>
+            <div class="step-num">1</div>
+            <div class="step-body">
+              <h3>Know what you want (but stay curious)</h3>
+              <p>Make a short list: mood (cozy, thrilling, thoughtful), length, and whether you want fiction or nonfiction. Allow one 'wild card' pick each month.</p>
+            </div>
+          </li>
+
+          <li>
+            <div class="step-num">2</div>
+            <div class="step-body">
+              <h3>Ask for curated recommendations</h3>
+              <p>Use book lists from libraries and trusted sites — staff picks, award lists, or "If you liked X, try Y" recommendations.</p>
+            </div>
+          </li>
+
+          <li>
+            <div class="step-num">3</div>
+            <div class="step-body">
+              <h3>Read the first 10–20 pages</h3>
+              <p>Preview a sample (many sites provide previews). If chapter 1 grabs you, keep going — if not, that's fine; move on.</p>
+            </div>
+          </li>
+
+          <li>
+            <div class="step-num">4</div>
+            <div class="step-body">
+              <h3>Check trustworthy reviews — selectively</h3>
+              <p>Look at a mix of librarian, critic, and reader reviews. Focus on reviews that explain *why* someone liked or disliked the book.</p>
+            </div>
+          </li>
+
+          <li>
+            <div class="step-num">5</div>
+            <div class="step-body">
+              <h3>Borrow before you buy</h3>
+              <p>Use libraries or free ebook sources so you can try a book without commitment. Libraries also surface hidden gems through staff picks and local lists.</p>
+            </div>
+          </li>
+
+          <li>
+            <div class="step-num">6</div>
+            <div class="step-body">
+              <h3>Mix formats and lengths</h3>
+              <p>Alternate long novels with short nonfiction or novellas. Try audiobooks for commuting or rereads.</p>
+            </div>
+          </li>
+
+          <li>
+            <div class="step-num">7</div>
+            <div class="step-body">
+              <h3>Use small experiments</h3>
+              <p>Set a one-week trial: sample three books and keep the one that makes you excited to read more.</p>
+            </div>
+          </li>
+
+          <li>
+            <div class="step-num">8</div>
+            <div class="step-body">
+              <h3>Create a tiny system</h3>
+              <p>Track books you've tried (notes, stars, short reasons). Over time you'll spot patterns in what you truly enjoy.</p>
+            </div>
+          </li>
+
+          <li>
+            <div class="step-num">9</div>
+            <div class="step-body">
+              <h3>Join a community</h3>
+              <p>Book clubs, social feeds, or your library's reading groups expose you to books you'd never find alone.</p>
+            </div>
+          </li>
+
+          <li>
+            <div class="step-num">10</div>
+            <div class="step-body">
+              <h3>Be kind to your reading time</h3>
+              <p>If a book isn't working after a fair try, it's fine to stop. Reading should be pleasure or purposeful learning — not punishment.</p>
+            </div>
+          </li>
+        </ul>
+
+        <footer class="muted">Tip: Try one step at a time. Small changes often lead to the best discoveries.</footer>
+      </main>
+
+      <aside class="card">
+        <h3 style="margin-top:0;">Helpful sites & library tools</h3>
+        <p class="note">Click any link to explore catalogs, previews, or curated lists.</p>
+
+        <div style="margin-top:12px; display:flex; flex-wrap:wrap;">
+          <a href="https://www.goodreads.com" target="_blank" rel="noopener">Goodreads</a>
+          <a href="https://www.openlibrary.org" target="_blank" rel="noopener">Open Library</a>
+          <a href="https://www.gutenberg.org" target="_blank" rel="noopener">Project Gutenberg</a>
+          <a href="https://www.worldcat.org" target="_blank" rel="noopener">WorldCat (find libraries)</a>
+          <a href="https://www.overdrive.com" target="_blank" rel="noopener">OverDrive / Libby</a>
+          <a href="https://www.loc.gov" target="_blank" rel="noopener">Library of Congress</a>
+          <iframe src="https://kmshea.formaloo.me/nbuiww" height="700" width="400"></iframe>
+        </div>
+
+        <div class="note" style="margin-top:14px;">Other ideas: search your local library website for "staff picks" or "new releases" sections, and explore curated lists like award winners (Pulitzer, Booker, etc.).</div>
+      </aside>
+    </div>
+  </div>
+  <div class='tableauPlaceholder' id='viz1765214558992' style='position: relative'><noscript><a href='#'><img alt='Women in Politics ' src='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;Wo&#47;Womensrepresentationinpoliticsvizforsocialgood&#47;WomeninPolitics&#47;1_rss.png' style='border: none' /></a></noscript><object class='tableauViz'  style='display:none;'><param name='host_url' value='https%3A%2F%2Fpublic.tableau.com%2F' /> <param name='embed_code_version' value='3' /> <param name='site_root' value='' /><param name='name' value='Womensrepresentationinpoliticsvizforsocialgood&#47;WomeninPolitics' /><param name='tabs' value='no' /><param name='toolbar' value='yes' /><param name='static_image' value='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;Wo&#47;Womensrepresentationinpoliticsvizforsocialgood&#47;WomeninPolitics&#47;1.png' /> <param name='animate_transition' value='yes' /><param name='display_static_image' value='yes' /><param name='display_spinner' value='yes' /><param name='display_overlay' value='yes' /><param name='display_count' value='yes' /><param name='language' value='en-US' /><param name='filter' value='_gl=1*1qur1ee*_ga*MTg5MzM5NDI2My4xNzY1MjE0Mzk1*_ga_8YLN0SNXVS*czE3NjUyMTQzOTMkbzEkZzEkdDE3NjUyMTQ0ODEkajYwJGwwJGgw*_gcl_au*MTk4NDU0NjQ4MS4xNzY1MjE0Mzk1' /></object></div>                <script type='text/javascript'>                    var divElement = document.getElementById('viz1765214558992');                    var vizElement = divElement.getElementsByTagName('object')[0];                    vizElement.style.width='1260px';vizElement.style.height='2327px';                    var scriptElement = document.createElement('script');                    scriptElement.src = 'https://public.tableau.com/javascripts/api/viz_v1.js';                    vizElement.parentNode.insertBefore(scriptElement, vizElement);                </script>
+</body>
+</html>

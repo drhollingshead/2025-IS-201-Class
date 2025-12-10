@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Snake Game – Cute Purple Edition</title>
+<style>
+    body {
+        background: #f3e9ff;
+        font-family: "Trebuchet MS", sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding-top: 20px;
+        color: #4b2c72;
+    }
+
+    h1 {
+        margin-bottom: 10px;
+        color: #6b3fa0;
+        text-shadow: 1px 1px #e5d4ff;
+    }
+
+    #controls {
+        margin-bottom: 15px;
+        display: flex;
+        gap: 20px;
+        align-items: center;
+        background: #e9d9ff;
+        padding: 10px 20px;
+        border-radius: 12px;
+        box-shadow: 0 0 10px rgba(150, 110, 190, 0.3);
+    }
+
+    label {
+        font-size: 16px;
+        font-weight: bold;
+    }
+
+    #speed {
+        width: 120px;
+    }
+
+    #mazeToggle {
+        transform: scale(1.3);
+        cursor: pointer;
+        accent-color: #b37aff;
+    }
+
+    #gameContainer {
+        position: relative;
+    }
+
+    canvas {
+        background: #fefaff;
+        border: 4px solid #c3a4f0;
+        border-radius: 10px;
+        box-shadow: 0 0 15px rgba(150, 110, 190, 0.25);
+    }
+
+    #gameOverOverlay {
+        display: none;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(80, 40, 120, 0.75);
+        border-radius: 10px;
+
+        color: white;
+        text-align: center;
+        padding-top: 70px;
+        font-size: 32px;
+        font-weight: bold;
+        text-shadow: 2px 2px #00000044;
+    }
+
+    #gameOverOverlay button {
+        margin-top: 20px;
+        padding: 12px 24px;
+        border: none;
+        border-radius: 10px;
+        background: #dfc2ff;
+        color: #4c2b6f;
+        font-size: 20px;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+    #gameOverOverlay button:hover {
+        background: #f0d8ff;
+    }
+
+    #modeButtons {
+        margin-bottom: 15px;
+    }
+
+    #modeButtons button {
+        padding: 10px 20px;
+        border: none;
+        margin: 5px;
+        border-radius: 10px;
+        background: #d9bbff;
+        color: #4c2b6f;
+        cursor: pointer;
+        font-weight: bold;
+        transition: 0.2s;
+    }
+
+    #modeButtons button:hover {
+        background: #efdfff;
+    }
+
+    #scoreBoard {
+        margin-top: 10px;
+        font-size: 20px;
+    }
+</style>
+</head>
+<body>
+
+<h1>🐍 Cute Purple Snake!</h1>
+
+<div id="modeButtons">
+    <button onclick="startGame(1)">1 Player</button>
+    <button onclick="startGame(2)">2 Player</button>
+</div>
+
+<div id="controls">
+    <label>Speed: <span id="speedValue">5</span></label>
+    <input type="range" id="speed" min="2" max="15" value="5">
+
+    <label>
+        <input type="checkbox" id="mazeToggle">
+        Enable Progressive Maze
+    </label>
+</div>
+
+<div id="scoreBoard"></div>
+
+<div id="gameContainer">
+    <canvas id="game" width="500" height="500"></canvas>
+
+    <div id="gameOverOverlay">
+        <div id="gameOverText"></div>
+        <button onclick="restart()">Play Again 💜</button>
+    </div>
+</div>
+
+<script>
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
+const overlay = document.getElementById("gameOverOverlay");
+const gameOverText = document.getElementById("gameOverText");
+const speedSlider = document.getElementById("speed");
+const speedDisplay = document.getElementById("speedValue");
+const mazeToggle = document.getElementById("mazeToggle");
+const scoreBoard = document.getElementById("scoreBoard");
+
+let gameLoop;
+let obstacleLoop;
+let gridSize = 20;
+let players = [];
+let food = {};
+let obstacles = [];
+let gameRunning = false;
+let playerCount = 1;
+
+// COLORS
+const snakeColors = ["#a678ff", "#ff78d6"];
+const obstacleColor = "#c8a6ff";
+
+speedSlider.oninput = () => {
+    speedDisplay.textContent = speedSlider.value;
+    if (gameRunning) {
+        clearInterval(gameLoop);
+        gameLoop = setInterval(update, 1000 / speedSlider.value);
+    }
+};
+
+function startGame(count) {
+    playerCount = count;
+    resetGame();
+
+    overlay.style.display = "none";
+    gameRunning = true;
+
+    gameLoop = setInterval(update, 1000 / speedSlider.value);
+
+    if (mazeToggle.checked) {
+        obstacleLoop = setInterval(spawnObstacle, 5000);
+    }
+}
+
+function resetGame() {
+    players = [];
+    obstacles = [];
+    scoreBoard.innerHTML = "";
+
+    for (let i = 0; i < playerCount; i++) {
+        players.push({
+            x: 10 + i * 5,
+            y: 10,
+            dx: 1,
+            dy: 0,
+            tail: [{x: 10 + i * 5, y: 10}],
+            score: 0,
+            color: snakeColors[i]
+        });
+    }
+
+    placeFood();
+}
+
+function placeFood() {
+    let placed = false;
+    while (!placed) {
+        let newX = Math.floor(Math.random() * (canvas.width / gridSize));
+        let newY = Math.floor(Math.random() * (canvas.height / gridSize));
+
+        if (
+            !players.some(p => p.tail.some(seg => seg.x === newX && seg.y === newY)) &&
+            !obstacles.some(o => o.x === newX && o.y === newY)
+        ) {
+            food = {x: newX, y: newY};
+            placed = true;
+        }
+    }
+}
+
+function spawnObstacle() {
+    if (!gameRunning) return;
+
+    let placed = false;
+
+    while (!placed) {
+        let ox = Math.floor(Math.random() * (canvas.width / gridSize));
+        let oy = Math.floor(Math.random() * (canvas.height / gridSize));
+
+        if (
+            (food.x !== ox || food.y !== oy) &&
+            !players.some(p => p.tail.some(seg => seg.x === ox && seg.y === oy)) &&
+            !obstacles.some(o => o.x === ox && o.y === oy)
+        ) {
+            obstacles.push({x: ox, y: oy});
+            placed = true;
+        }
+    }
+}
+
+document.addEventListener("keydown", e => {
+    let p1 = players[0];
+    let p2 = players[1];
+
+    switch (e.key) {
+        // Player 1 (arrows)
+        case "ArrowUp": if (p1.dy === 0) setDir(p1, 0, -1); break;
+        case "ArrowDown": if (p1.dy === 0) setDir(p1, 0, 1); break;
+        case "ArrowLeft": if (p1.dx === 0) setDir(p1, -1, 0); break;
+        case "ArrowRight": if (p1.dx === 0) setDir(p1, 1, 0); break;
+
+        // Player 2 (WASD)
+        case "w": if (p2 && p2.dy === 0) setDir(p2, 0, -1); break;
+        case "s": if (p2 && p2.dy === 0) setDir(p2, 0, 1); break;
+        case "a": if (p2 && p2.dx === 0) setDir(p2, -1, 0); break;
+        case "d": if (p2 && p2.dx === 0) setDir(p2, 1, 0); break;
+    }
+});
+
+function setDir(player, dx, dy) {
+    player.dx = dx;
+    player.dy = dy;
+}
+
+function update() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Draw obstacles
+    ctx.fillStyle = obstacleColor;
+    for (let o of obstacles) {
+        ctx.fillRect(o.x * gridSize, o.y * gridSize, gridSize, gridSize);
+    }
+
+    // Move players
+    for (let p of players) {
+        let head = { x: p.x + p.dx, y: p.y + p.dy };
+
+        // Boundaries
+        if (head.x < 0 || head.x >= canvas.width / gridSize ||
+            head.y < 0 || head.y >= canvas.height / gridSize) {
+            return endGame();
+        }
+
+        // Self collision
+        if (p.tail.some(seg => seg.x === head.x && seg.y === head.y)) {
+            return endGame();
+        }
+
+        // Other snake collision
+        for (let other of players) {
+            if (other !== p && other.tail.some(seg => seg.x === head.x && seg.y === head.y)) {
+                return endGame();
+            }
+        }
+
+        // Obstacle collision
+        if (obstacles.some(o => o.x === head.x && o.y === head.y)) {
+            return endGame();
+        }
+
+        p.x = head.x;
+        p.y = head.y;
+        p.tail.unshift(head);
+
+        // Food
+        if (head.x === food.x && head.y === food.y) {
+            p.score++;
+            placeFood();
+        } else {
+            p.tail.pop();
+        }
+    }
+
+    // Draw food
+    ctx.fillStyle = "#ff8bf0";
+    ctx.fillRect(food.x * gridSize, food.y * gridSize, gridSize, gridSize);
+
+    // Draw snakes
+    for (let p of players) {
+        ctx.fillStyle = p.color;
+        for (let seg of p.tail) {
+            ctx.fillRect(seg.x * gridSize, seg.y * gridSize, gridSize, gridSize);
+        }
+    }
+
+    // Scoreboard
+    scoreBoard.innerHTML = players
+        .map((p, i) => `Player ${i+1} Score: ${p.score}`)
+        .join("<br>");
+}
+
+function endGame() {
+    clearInterval(gameLoop);
+    clearInterval(obstacleLoop);
+    gameRunning = false;
+
+    let winnerText = "";
+
+    if (playerCount === 1) {
+        winnerText = `Game Over! Score: ${players[0].score}`;
+    } else {
+        if (players[0].score > players[1].score)
+            winnerText = "Player 1 Wins! 🎉";
+        else if (players[1].score > players[0].score)
+            winnerText = "Player 2 Wins! 🎉";
+        else
+            winnerText = "It's a tie! 💜";
+    }
+
+    gameOverText.textContent = winnerText;
+    overlay.style.display = "block";
+}
+
+function restart() {
+    startGame(playerCount);
+}
+</script>
+
+</body>
+</html>
